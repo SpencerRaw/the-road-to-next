@@ -2,6 +2,7 @@ import { homePath, ticketsPath } from "@/path";
 import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 import { LucideAlignHorizontalSpaceAround } from "lucide-react";
+import { ThemeSwitcher } from "./theme/theme-switcher";
 
 const Header = () => {
   return (
@@ -14,7 +15,7 @@ const Header = () => {
         flex justify-between py-2.5 px-5
         "
     >
-      <div>
+      <div className="flex align-items gap-x-2">
         <Button asChild variant="ghost">
           <Link href={homePath()}>
             <LucideAlignHorizontalSpaceAround />
@@ -22,8 +23,8 @@ const Header = () => {
           </Link>
         </Button>
       </div>
-      <div>
-        {/* <Button asChild variant="outline"> */}
+      <div className="flex align-items gap-x-2">
+        <ThemeSwitcher />
         <Link
           href={ticketsPath()}
           className={buttonVariants({ variant: "default" })}
