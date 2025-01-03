@@ -23,7 +23,7 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
 
   return (
     <div
-      className="w-full flex gap-x-1"
+      className="w-full flex space-x-1"
       style={{
         maxWidth: isDetail ? "580px" : "420px", // 根据 isDetail 动态设置 maxWidth
       }}
