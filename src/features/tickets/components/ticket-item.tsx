@@ -1,24 +1,60 @@
-import clsx from "clsx";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ticketPath } from "@/path";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ticketEditPath, ticketPath } from "@/path";
 import Link from "next/link";
-import { TICKET_ICON } from "../constants";
-import { Ticket } from "../types";
-import { LucideSquareArrowOutUpRight } from "lucide-react";
+import { TICKET_ICONS } from "../constants";
+// import { Ticket } from "../types";
+import {
+  LucideMoreVertical,
+  LucidePencil,
+  LucideSquareArrowOutUpRight,
+  LucideTrash,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Ticket } from "@prisma/client";
+
+import { deleteTicket } from "../actions/delete-ticket";
+import { toCurrencyFromCent } from "@/utils/currency";
+import { TicketMoreMenu } from "./ticket-more-menu";
+import { useConfirmDialog } from "@/components/confirm-dialog";
 
 type TicketItemProps = {
   ticket: Ticket;
   isDetail?: boolean;
 };
 
-const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
+const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
+  // const ticketPerTicketItem = await getTicket(ticket.id);
   const detailButton = (
     <Button variant={"outline"} asChild size="icon">
-      <Link href={ticketPath(ticket.id)}>
+      <Link prefetch href={ticketPath(ticket.id)}>
         <LucideSquareArrowOutUpRight className="h-4 w-4" />
       </Link>
     </Button>
+  );
+
+  const editButton = (
+    <Button variant="outline" size="icon" asChild>
+      <Link prefetch href={ticketEditPath(ticket.id)}>
+        <LucidePencil className="h-4 w-4" />
+      </Link>
+    </Button>
+  );
+
+  const moreMenu = (
+    <TicketMoreMenu
+      ticket={ticket}
+      trigger={
+        <Button variant="outline" size="icon">
+          <LucideMoreVertical className="h-4 w-4" />
+        </Button>
+      }
+    />
   );
 
   return (
@@ -31,7 +67,7 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex gap-x-2">
-            <span>{TICKET_ICON[ticket.status]}</span>
+            <span>{TICKET_ICONS[ticket.status]}</span>
             <span className="truncate">{ticket.title}</span>
           </CardTitle>
         </CardHeader>
@@ -48,10 +84,26 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
             {ticket.content}
           </span>
         </CardContent>
+        <CardFooter className="flex justify-between">
+          <p className="text-sm text-muted-foreground">{ticket.deadline}</p>
+          <p className="text-sm text-muted-foreground">
+            {toCurrencyFromCent(ticket.bounty)}
+          </p>
+        </CardFooter>
       </Card>
-      {isDetail ? null : (
-        <div className="flex flex-col gap-y-1">{detailButton}</div>
-      )}
+      <div className="flex flex-col gap-y-1">
+        {isDetail ? (
+          <>
+            {editButton}
+            {moreMenu}
+          </>
+        ) : (
+          <>
+            {detailButton}
+            {editButton}
+          </>
+        )}
+      </div>
     </div>
   );
 };
