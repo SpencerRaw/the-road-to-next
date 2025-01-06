@@ -1,10 +1,33 @@
-import { homePath, ticketsPath } from "@/path";
+import { homePath, ticketsPath, signInPath, signUpPath } from "@/path";
 import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 import { LucideAlignHorizontalSpaceAround } from "lucide-react";
 import { ThemeSwitcher } from "./theme/theme-switcher";
 
 const Header = () => {
+  const navItems = (
+    <>
+      <Link
+        href={ticketsPath()}
+        className={buttonVariants({ variant: "default" })}
+      >
+        Tickets
+      </Link>
+      <Link
+        href={signUpPath()}
+        className={buttonVariants({ variant: "outline" })}
+      >
+        Sign Up
+      </Link>
+      <Link
+        href={signInPath()}
+        className={buttonVariants({ variant: "outline" })}
+      >
+        Sign In
+      </Link>
+    </>
+  );
+
   return (
     <nav
       className="
@@ -25,12 +48,7 @@ const Header = () => {
       </div>
       <div className="flex align-items gap-x-2">
         <ThemeSwitcher />
-        <Link
-          href={ticketsPath()}
-          className={buttonVariants({ variant: "default" })}
-        >
-          Tickets
-        </Link>
+        {navItems}
         {/* </Button> */}
       </div>
     </nav>
