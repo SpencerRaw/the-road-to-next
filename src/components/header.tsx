@@ -1,11 +1,22 @@
+"use client";
+
 import { homePath, ticketsPath, signInPath, signUpPath } from "@/path";
 import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
-import { LucideAlignHorizontalSpaceAround } from "lucide-react";
+import { LucideAlignHorizontalSpaceAround, LucideLogOut } from "lucide-react";
 import { ThemeSwitcher } from "./theme/theme-switcher";
+import { SubmitButton } from "./form/submit-button";
+import { signOut } from "@/features/auth/actions/sign-out";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 
 const Header = () => {
-  const navItems = (
+  const { user, isFetched } = useAuth();
+
+  if (!isFetched) {
+    return null;
+  }
+
+  const navItems = user ? (
     <>
       <Link
         href={ticketsPath()}
@@ -13,6 +24,13 @@ const Header = () => {
       >
         Tickets
       </Link>
+
+      <form action={signOut}>
+        <SubmitButton label="Sign Out" icon={<LucideLogOut />} />
+      </form>
+    </>
+  ) : (
+    <>
       <Link
         href={signUpPath()}
         className={buttonVariants({ variant: "outline" })}
@@ -21,7 +39,7 @@ const Header = () => {
       </Link>
       <Link
         href={signInPath()}
-        className={buttonVariants({ variant: "outline" })}
+        className={buttonVariants({ variant: "default" })}
       >
         Sign In
       </Link>
@@ -31,6 +49,7 @@ const Header = () => {
   return (
     <nav
       className="
+        animate-header-from-top
         supports-backdrop-blur:bg-background/60
         fixed left-0 right-0 top-0 z-20
         border-b bg-background/95 backdrop-blur
