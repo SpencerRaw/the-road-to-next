@@ -13,23 +13,37 @@ import {
   LucideMoreVertical,
   LucidePencil,
   LucideSquareArrowOutUpRight,
-  LucideTrash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Ticket } from "@prisma/client";
+import { Prisma, Ticket, User } from "@prisma/client";
 
-import { deleteTicket } from "../actions/delete-ticket";
 import { toCurrencyFromCent } from "@/utils/currency";
 import { TicketMoreMenu } from "./ticket-more-menu";
-import { useConfirmDialog } from "@/components/confirm-dialog";
+import { getAuth } from "@/features/auth/queries/get-auth";
+import { isOwner } from "@/features/auth/utils/is-owner";
 
 type TicketItemProps = {
-  ticket: Ticket;
+  // ticket: Ticket & {
+  //   user: User;
+  // };
+  ticket: Prisma.TicketGetPayload<{
+    include: {
+      user: {
+        select: {
+          username: true;
+        };
+      };
+    };
+  }>;
   isDetail?: boolean;
 };
 
 const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
   // const ticketPerTicketItem = await getTicket(ticket.id);
+  const { user } = await getAuth();
+  const simpleUser = user ? { id: user.id } : null;
+  const isTicketOwner = isOwner(simpleUser, ticket);
+
   const detailButton = (
     <Button variant={"outline"} asChild size="icon">
       <Link prefetch href={ticketPath(ticket.id)}>
@@ -38,15 +52,15 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
     </Button>
   );
 
-  const editButton = (
+  const editButton = isTicketOwner ? (
     <Button variant="outline" size="icon" asChild>
       <Link prefetch href={ticketEditPath(ticket.id)}>
         <LucidePencil className="h-4 w-4" />
       </Link>
     </Button>
-  );
+  ) : null;
 
-  const moreMenu = (
+  const moreMenu = isTicketOwner ? (
     <TicketMoreMenu
       ticket={ticket}
       trigger={
@@ -55,7 +69,7 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
         </Button>
       }
     />
-  );
+  ) : null;
 
   return (
     <div
@@ -85,7 +99,9 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
           </span>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <p className="text-sm text-muted-foreground">{ticket.deadline}</p>
+          <p className="text-sm text-muted-foreground">
+            {ticket.deadline} by {ticket.user.username}
+          </p>
           <p className="text-sm text-muted-foreground">
             {toCurrencyFromCent(ticket.bounty)}
           </p>

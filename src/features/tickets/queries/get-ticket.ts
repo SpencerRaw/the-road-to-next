@@ -1,24 +1,45 @@
-// import { initialTickets } from "@/data"
-// import { Ticket } from "../types";
 
-// export const getTicket = async (ticketId:string):Promise<Ticket | null> => {
 
-//     await new Promise((resolve) => setTimeout(resolve,2000));
-
-//     const maybeTicket = initialTickets.find((ticket) => ticket.id === ticketId);
-
-//     return new Promise((resolve) => {
-//         resolve(maybeTicket || null);
-//     });
-// };
-
+import { getAuth } from "@/features/auth/queries/get-auth";
+import { isOwner } from "@/features/auth/utils/is-owner";
 import {prisma} from "@/lib/prisma"
-// import { cache } from "react"
 
-export const getTicket = async (id:string) => {
-    return await prisma.ticket.findUnique({
-        where : {
-            id,
-        }
-    })
-}
+
+// export const getTicket = async (id:string) => {
+//     return await prisma.ticket.findUnique({
+//         where : {
+//             id,
+//         },
+//         include: {
+//             user:{
+//                 select:{
+//                     username: true
+//                 }
+//             }
+//         }
+//     })
+// }
+
+export const getTicket = async (id: string) => {
+    const { user } = await getAuth();
+    const simpleUser = user ? { id: user.id } : null;
+  
+    const ticket = await prisma.ticket.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
+  
+    if (!ticket) {
+      return null;
+    }
+  
+    return { ...ticket, isOwner: isOwner(simpleUser, ticket) };
+  };
