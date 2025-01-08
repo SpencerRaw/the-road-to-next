@@ -6,6 +6,7 @@ import { ParsedSearchParams } from "../search-params";
 import { Placeholder } from "@/components/placeholder";
 import { TicketSearchInput } from "./ticket-search-input";
 import { TicketSortSelect } from "./ticket-sort-select";
+import { TicketPagination } from "./ticket-pagination";
 // import { SortSelect } from "@/components/sort-select";
 
 type TicketListProps = {
@@ -15,7 +16,10 @@ type TicketListProps = {
 
 const TicketList = async ({ userId, searchParams }: TicketListProps) => {
   // const resolvedSearchParams = await Promise.resolve(searchParams);
-  const tickets = await getTickets(userId, searchParams);
+  const { list: tickets, metadata: ticketMetadata } = await getTickets(
+    userId,
+    searchParams
+  );
   // const tickets = await prisma.ticket.findMany();
 
   return (
@@ -47,6 +51,11 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
       ) : (
         <Placeholder label="No tickets found" />
       )}
+
+      <div className="w-full max-w-[420px]">
+        {/* <TicketPagination paginatedTicketMetadata={ticketMetadata} /> */}
+        <TicketPagination paginatedTicketMetadata={ticketMetadata} />
+      </div>
     </div>
   );
 };
