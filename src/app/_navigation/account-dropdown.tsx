@@ -1,5 +1,5 @@
 import { signOut } from "@/features/auth/actions/sign-out";
-import { SubmitButton } from "./form/submit-button";
+import { SubmitButton } from "../../components/form/submit-button";
 import { LucideLock, LucideLogOut, LucideUser } from "lucide-react";
 import { User } from "lucia";
 import {
@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 import Link from "next/link";
 import { accountPasswordPath, accountProfilePath } from "@/path";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";

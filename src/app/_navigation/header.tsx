@@ -2,10 +2,10 @@
 
 import { homePath, ticketsPath, signInPath, signUpPath } from "@/path";
 import Link from "next/link";
-import { Button, buttonVariants } from "./ui/button";
+import { Button, buttonVariants } from "../../components/ui/button";
 import { LucideAlignHorizontalSpaceAround, LucideLogOut } from "lucide-react";
-import { ThemeSwitcher } from "./theme/theme-switcher";
-import { SubmitButton } from "./form/submit-button";
+import { ThemeSwitcher } from "../../components/theme/theme-switcher";
+import { SubmitButton } from "../../components/form/submit-button";
 import { signOut } from "@/features/auth/actions/sign-out";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { AccountDropdown } from "./account-dropdown";
